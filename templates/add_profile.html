@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Add Your Profile Details</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="tab-header">
+  <button class="tab-btn active" data-tab="education">Education</button>
+  <button class="tab-btn" data-tab="certification">Certifications</button>
+  <button class="tab-btn" data-tab="project">Projects</button>
+  <button class="tab-btn" data-tab="experience">Experience</button>
+  <button class="tab-btn" data-tab="skills">Skills</button>
+</div>
+
+<!-- Education -->
+<div class="tab-content active" id="education">
+  <form method="POST" class="form">
+    <input type="hidden" name="section" value="education">
+    <label>Degree</label>
+    <input type="text" name="degree" required>
+    <label>University</label>
+    <input type="text" name="university" required>
+    <label>Start Date</label>
+    <input type="month" name="edu_start">
+    <label>End Date</label>
+    <input type="month" name="edu_end">
+    <label>CGPA</label>
+    <input type="text" name="cgpa">
+    <button type="submit" class="btn">Save Education</button>
+  </form>
+</div>
+
+<!-- Certification -->
+<div class="tab-content" id="certification">
+  <form method="POST" class="form">
+    <input type="hidden" name="section" value="certification">
+    <label>Certificate Name</label>
+    <input type="text" name="cert_name" required>
+    <label>Organization</label>
+    <input type="text" name="cert_org" required>
+    <button type="submit" class="btn">Save Certification</button>
+  </form>
+</div>
+
+<!-- Project -->
+<div class="tab-content" id="project">
+  <form method="POST" class="form">
+    <input type="hidden" name="section" value="project">
+    <label>Project Title</label>
+    <input type="text" name="proj_name" required>
+    <label>Start Date</label>
+    <input type="month" name="proj_start">
+    <label>End Date</label>
+    <input type="month" name="proj_end">
+    <label>Description</label>
+    <textarea name="proj_desc"></textarea>
+    <button type="submit" class="btn">Save Project</button>
+  </form>
+</div>
+
+<!-- Experience -->
+<div class="tab-content" id="experience">
+  <form method="POST" class="form">
+    <input type="hidden" name="section" value="experience">
+    <label>Job Title</label>
+    <input type="text" name="exp_title" required>
+    <label>Company</label>
+    <input type="text" name="exp_company" required>
+    <label>Start Date</label>
+    <input type="month" name="exp_start">
+    <label>End Date</label>
+    <input type="month" name="exp_end">
+    <label>Location</label>
+    <input type="text" name="exp_location">
+    <label>Description</label>
+    <textarea name="exp_desc"></textarea>
+    <button type="submit" class="btn">Save Experience</button>
+  </form>
+</div>
+
+<!-- Skills -->
+<div class="tab-content" id="skills">
+  <form method="POST" class="form">
+    <input type="hidden" name="section" value="skills">
+    <label>Skills (comma-separated)</label>
+    <input type="text" name="skills" placeholder="Python, Flask, AI" required>
+    <button type="submit" class="btn">Save Skills</button>
+  </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".tab-btn");
+  const contents = document.querySelectorAll(".tab-content");
+  tabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      tabs.forEach(b => b.classList.remove("active"));
+      contents.forEach(c => c.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById(btn.dataset.tab).classList.add("active");
+    });
+  });
+});
+</script>
+{% endblock %}

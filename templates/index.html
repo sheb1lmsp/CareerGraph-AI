@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="hero-content">
+    <h1><i class="fa-solid fa-chart-line"></i> Welcome to <span>CareerGraph AI</span></h1>
+    <p>
+      Your personal AI-powered career assistant — analyze your skills, build tailored resumes,
+      and get intelligent recommendations to grow your professional journey.
+    </p>
+
+    {% if session.user_id %}
+      <a href="{{ url_for('profile_page') }}" class="btn hero-btn">
+        <i class="fa-solid fa-user"></i> Go to Profile
+      </a>
+    {% else %}
+      <div class="hero-actions">
+        <a href="{{ url_for('register_page') }}" class="btn hero-btn primary">
+          <i class="fa-solid fa-user-plus"></i> Get Started
+        </a>
+        <a href="{{ url_for('login_page') }}" class="btn hero-btn secondary">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="hero-image">
+    <img src="{{ url_for('static', filename='ai_career.svg') }}" alt="CareerGraph AI illustration">
+  </div>
+</section>
+{% endblock %}
