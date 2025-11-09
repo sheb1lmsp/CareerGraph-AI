@@ -15,6 +15,7 @@
       {% if session.user_id %}
         <a href="{{ url_for('profile_page') }}"><i class="fa-solid fa-user"></i> Profile</a>
         <a href="{{ url_for('add_profile_page') }}"><i class="fa-solid fa-plus"></i> Add Details</a>
+        <a href="{{ url_for('chat_page') }}"><i class="fa-solid fa-comments"></i> AI Chat</a>
         <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       {% else %}
         <a href="{{ url_for('login_page') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a>

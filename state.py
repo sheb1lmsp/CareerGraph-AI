@@ -63,6 +63,7 @@ class State(TypedDict):
 
     # Additional metadata or runtime information
     metadata: Optional[Dict]
+    user_id: Optional[int]
 
     # File path to generated resume (if applicable)
     resume_path: Optional[str]

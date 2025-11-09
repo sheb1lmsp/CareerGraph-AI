@@ -5,6 +5,7 @@ from flask_cors import CORS
 from models import db, User, Education, Certification, Project, Skill, Experience
 from utils.get_profile import get_user_profile_from_db
 from config import SECRET_KEY
+from conversation_manager import manager
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -178,5 +179,32 @@ def add_profile_page():
 
     return render_template("add_profile.html")
 
+@app.route("/chat", methods=["GET", "POST"])
+def chat_page():
+    if "user_id" not in session:
+        return redirect(url_for("login_page"))
+
+    # Initialize chat history in session
+    if "chat_history" not in session:
+        session["chat_history"] = []
+
+    if request.method == "POST":
+
+        memory = []
+        for i in session["chat_history"][-10:]:
+            memory.append(f"{i['sender']} : {i['text']}")
+        user_message = request.form.get("message", "").strip()
+
+        response = manager(user_message, memory, session["user_id"])
+
+        if user_message:
+            # Append user message
+            session["chat_history"].append({"sender": "user", "text": user_message})
+            
+            session["chat_history"].append({"sender": "bot", "text": response})
+            session.modified = True  # Important for session updates
+
+    return render_template("chat.html", chat_history=session["chat_history"])
+    
 if __name__ == "__main__":
     app.run(debug=True)

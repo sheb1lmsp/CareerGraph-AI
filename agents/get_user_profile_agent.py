@@ -16,7 +16,7 @@ def get_user_profile(state: State) -> State:
     """
 
     # Fetch user profile data from a database or API (to be implemented)
-    profile_data: Dict[str, Any] = get_user_profile_from_db()
+    profile_data: Dict[str, Any] = get_user_profile_from_db(state['user_id'])
 
     # Update the shared state with profile details
     state["skills"] = profile_data.get("skills", [])

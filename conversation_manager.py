@@ -26,50 +26,37 @@ exit_prompt = ChatPromptTemplate.from_template(
 # Combine prompt with the language model
 exit_chain = exit_prompt | llm
 
-if __name__ == "__main__"
+def manager(user_input: str, memory: list, user_id: int) -> str:
     # Initialize Memory
-    memory = []          # Stores dialogue history
     memory_summary = ""  # Compressed summary of recent context
 
-    # Main Conversation Loop
-    while True:
-        # Get user input
-        user_input = input("User: ")
+    # Check if user wants to end the conversation
+    should_continue = exit_chain.invoke({'user_input': user_input}).content.strip()
 
-        # Check if user wants to end the conversation
-        should_continue = exit_chain.invoke({'user_input': user_input}).content.strip()
+    if should_continue == "exit":
+        return "Goodbye 👋"
 
-        if should_continue == "exit":
-            print("AI: Goodbye 👋")
-            break  # Exit loop gracefully
+    # If there’s existing conversation, summarize it
+    if len(memory) != 0:
+        summary_prompt = ChatPromptTemplate.from_template(
+            "Summarize the key context of this conversation in 5 concise sentences:\n\n{conversation}"
+        )
+        formatted = "\n".join(memory)
+        chain = summary_prompt | llm
+        memory_summary = chain.invoke({"conversation": formatted}).content.strip()
+    else:
+        memory_summary = ""
 
-        # Retain only last 10 messages for context
-        memory = memory[-10:]
+    # Build the current conversation state
+    state = {
+        "input_text": user_input,
+        "memory_summary": memory_summary,
+        "user_id" : user_id
+    }
 
-        # If there’s existing conversation, summarize it
-        if memory:
-            summary_prompt = ChatPromptTemplate.from_template(
-                "Summarize the key context of this conversation in 5 concise sentences:\n\n{conversation}"
-            )
-            formatted = "\n".join(memory)
-            chain = summary_prompt | llm
-            memory_summary = chain.invoke({"conversation": formatted}).content.strip()
-        else:
-            memory_summary = ""
+    # Invoke the main LangGraph app (routes to the right agent)
+    result = app.invoke(state)
+    response = result.get("response", "(No response)")
 
-        # Build the current conversation state
-        state = {
-            "input_text": user_input,
-            "memory_summary": memory_summary,
-        }
-
-        # Invoke the main LangGraph app (routes to the right agent)
-        result = app.invoke(state)
-        response = result.get("response", "(No response)")
-
-        # Display AI response
-        print(f"AI: {response}\n")
-
-        # Save latest messages in memory
-        memory.append(f"User: {user_input}")
-        memory.append(f"AI: {response}")
+    # Display AI response
+    return response

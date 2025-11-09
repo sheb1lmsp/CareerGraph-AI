@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>AI Chat Assistant</h2>
+<p class="chat-subtitle">Talk about your career — I'm listening!</p>
+
+<div class="chat-container">
+  <div class="chat-messages" id="messages">
+    {% for msg in chat_history %}
+      <div class="message {{ 'user-message' if msg.sender == 'user' else 'bot-message' }}">
+        <div class="message-content">{{ msg.text }}</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <form method="POST" class="chat-form" id="chatForm">
+    <div class="chat-input-group">
+      <input type="text" name="message" placeholder="Type a message..." autocomplete="off" required autofocus>
+      <button type="submit" class="chat-send-btn">
+        Send
+      </button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Auto-scroll to bottom
+  const messages = document.getElementById('messages');
+  messages.scrollTop = messages.scrollHeight;
+
+  // Optional: Submit on Enter, but allow Shift+Enter for new line
+  document.querySelector('input[name="message"]').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      document.getElementById('chatForm').submit();
+    }
+  });
+</script>
+{% endblock %}
