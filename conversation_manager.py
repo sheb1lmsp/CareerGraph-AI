@@ -26,7 +26,7 @@ exit_prompt = ChatPromptTemplate.from_template(
 # Combine prompt with the language model
 exit_chain = exit_prompt | llm
 
-def manager(user_input: str, memory: list, user_id: int) -> str:
+def manager(user_input: str, memory: list, user_id: int, file_path: str = None) -> str:
     # Initialize Memory
     memory_summary = ""  # Compressed summary of recent context
 
@@ -48,11 +48,19 @@ def manager(user_input: str, memory: list, user_id: int) -> str:
         memory_summary = ""
 
     # Build the current conversation state
-    state = {
-        "input_text": user_input,
-        "memory_summary": memory_summary,
-        "user_id" : user_id
-    }
+    if file_path:
+        state = {
+            "input_text": user_input,
+            "memory_summary": memory_summary,
+            "user_id" : user_id,
+            "resume_path" : file_path
+        }
+    else:
+         state = {
+            "input_text": user_input,
+            "memory_summary": memory_summary,
+            "user_id" : user_id,
+        }       
 
     # Invoke the main LangGraph app (routes to the right agent)
     result = app.invoke(state)

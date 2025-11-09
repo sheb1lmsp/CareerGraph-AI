@@ -6,6 +6,8 @@ from models import db, User, Education, Certification, Project, Skill, Experienc
 from utils.get_profile import get_user_profile_from_db
 from config import SECRET_KEY
 from conversation_manager import manager
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -17,6 +19,16 @@ app.secret_key = SECRET_KEY
 
 with app.app_context():
     db.create_all()
+
+# Ensure temp directory exists
+TEMP_DIR = os.path.join(os.path.dirname(__file__), 'temp')
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+# Allowed extensions
+ALLOWED_EXTENSIONS = {'pdf', 'docx'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def format_month_year(date_str: str) -> str:
     """Convert 'YYYY-MM' into 'Month YYYY' (e.g. 2024-03 → March 2024)"""
@@ -195,7 +207,28 @@ def chat_page():
             memory.append(f"{i['sender']} : {i['text']}")
         user_message = request.form.get("message", "").strip()
 
-        response = manager(user_message, memory, session["user_id"])
+        # Handle file upload
+        uploaded_file_path = None
+        if 'file' in request.files:
+            file = request.files['file']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Add user_id and timestamp to avoid conflicts
+                import time
+                unique_filename = f"{session['user_id']}_{int(time.time())}_{filename}"
+                uploaded_file_path = os.path.join(TEMP_DIR, unique_filename)
+                file.save(uploaded_file_path)
+
+                # Store file info in session for later cleanup
+                if 'uploaded_files' not in session:
+                    session['uploaded_files'] = []
+                session['uploaded_files'].append(uploaded_file_path)
+                session.modified = True
+
+        if uploaded_file_path:
+            response = manager(user_message, memory, session["user_id"], uploaded_file_path)
+        else:
+            response = manager(user_message, memory, session["user_id"])
 
         if user_message:
             # Append user message

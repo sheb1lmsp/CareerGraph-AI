@@ -7,32 +7,111 @@
   <div class="chat-messages" id="messages">
     {% for msg in chat_history %}
       <div class="message {{ 'user-message' if msg.sender == 'user' else 'bot-message' }}">
-        <div class="message-content">{{ msg.text }}</div>
+        <div class="message-content">
+          {% if msg.sender == 'user' %}
+            {{ msg.text|safe }}
+          {% else %}
+            <div class="pretty-bot" data-raw="{{ msg.text }}"></div>
+          {% endif %}
+        </div>
       </div>
     {% endfor %}
   </div>
 
-  <form method="POST" class="chat-form" id="chatForm">
+  <form method="POST" class="chat-form" id="chatForm" enctype="multipart/form-data">
     <div class="chat-input-group">
-      <input type="text" name="message" placeholder="Type a message..." autocomplete="off" required autofocus>
-      <button type="submit" class="chat-send-btn">
-        Send
-      </button>
+      <input type="text" name="message" placeholder="Type a message..." autocomplete="off" autofocus>
+      
+      <input type="file" name="file" id="fileInput" accept=".pdf,.docx" style="display:none;">
+
+      <div class="chat-actions">
+        <button type="button" class="chat-attach-btn" onclick="document.getElementById('fileInput').click();" title="Attach PDF or DOCX">
+          Attach
+        </button>
+        <button type="submit" class="chat-send-btn">Send</button>
+      </div>
     </div>
   </form>
 </div>
 
-<script>
-  // Auto-scroll to bottom
-  const messages = document.getElementById('messages');
-  messages.scrollTop = messages.scrollHeight;
+<style>
+  .chat-input-group { display:flex; align-items:center; gap:8px; }
+  .chat-actions { display:flex; gap:4px; }
+  .chat-attach-btn {
+    background:none; border:none; font-size:1.2em; cursor:pointer;
+    padding:8px; border-radius:4px; transition:background .2s;
+  }
+  .chat-attach-btn:hover { background:rgba(0,0,0,.1); }
+  
+  /* Pretty bot message styling */
+  .pretty-bot pre {
+    background: #f6f8fa; padding: 12px; border-radius: 6px; overflow-x: auto;
+    margin: 8px 0;
+  }
+  .pretty-bot code {
+    font-family: 'Consolas', 'Monaco', monospace;
+  }
+</style>
 
-  // Optional: Submit on Enter, but allow Shift+Enter for new line
-  document.querySelector('input[name="message"]').addEventListener('keydown', function(e) {
+<!-- CDN Links -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Configure marked
+    marked.setOptions({
+      highlight: function(code, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+          try { return hljs.highlight(code, { language: lang }).value; }
+          catch (_) {}
+        }
+        return hljs.highlightAuto(code).value;
+      },
+      breaks: true,
+      gfm: true
+    });
+
+    // Render bot messages
+    document.querySelectorAll('.pretty-bot').forEach(el => {
+      const rawText = el.getAttribute('data-raw') || '';
+      if (rawText) {
+        el.innerHTML = marked.parse(rawText);
+      }
+    });
+
+    // Auto-scroll
+    const messages = document.getElementById('messages');
+    messages.scrollTop = messages.scrollHeight;
+  });
+
+  // Enter key handling
+  const form = document.getElementById('chatForm');
+  const msgInput = form.querySelector('input[name="message"]');
+  const fileInput = document.getElementById('fileInput');
+
+  msgInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      document.getElementById('chatForm').submit();
+      form.submit();
     }
+  });
+
+  // File selection
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length === 0) return;
+
+    const fileName = fileInput.files[0].name;
+    const cur = msgInput.value.trim();
+
+    if (cur) {
+      msgInput.value = cur + (cur.endsWith(' ') ? '' : ' ') + `[Attached: ${fileName}]`;
+    } else {
+      msgInput.value = `[Attached: ${fileName}]`;
+    }
+
+    msgInput.focus();
   });
 </script>
 {% endblock %}

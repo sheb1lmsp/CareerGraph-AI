@@ -589,3 +589,13 @@ textarea {
   background: #cbd5e1;
   border-radius: 3px;
 }
+
+.pretty-bot pre {
+  background: #f6f8fa;
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.pretty-bot code {
+  font-family: 'Consolas', 'Monaco', monospace;
+}
