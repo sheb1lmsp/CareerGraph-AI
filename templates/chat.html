@@ -26,9 +26,11 @@
 
       <div class="chat-actions">
         <button type="button" class="chat-attach-btn" onclick="document.getElementById('fileInput').click();" title="Attach PDF or DOCX">
-          Attach
+          <i class="fa-solid fa-paperclip"></i>
         </button>
-        <button type="submit" class="chat-send-btn">Send</button>
+        <button type="submit" class="chat-send-btn">
+          <i class="fa-solid fa-paper-plane"></i>
+        </button>
       </div>
     </div>
   </form>
@@ -36,14 +38,23 @@
 
 <style>
   .chat-input-group { display:flex; align-items:center; gap:8px; }
-  .chat-actions { display:flex; gap:4px; }
+  .chat-actions { display:flex; gap:8px; }
   .chat-attach-btn {
-    background:none; border:none; font-size:1.2em; cursor:pointer;
-    padding:8px; border-radius:4px; transition:background .2s;
+    background: #e2e8f0;
+    color: #475569;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all .2s;
   }
-  .chat-attach-btn:hover { background:rgba(0,0,0,.1); }
+  .chat-attach-btn:hover { background: #cbd5e1; }
   
-  /* Pretty bot message styling */
   .pretty-bot pre {
     background: #f6f8fa; padding: 12px; border-radius: 6px; overflow-x: auto;
     margin: 8px 0;
@@ -53,14 +64,8 @@
   }
 </style>
 
-<!-- CDN Links -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Configure marked
     marked.setOptions({
       highlight: function(code, lang) {
         if (lang && hljs.getLanguage(lang)) {
@@ -73,7 +78,6 @@
       gfm: true
     });
 
-    // Render bot messages
     document.querySelectorAll('.pretty-bot').forEach(el => {
       const rawText = el.getAttribute('data-raw') || '';
       if (rawText) {
@@ -81,16 +85,15 @@
       }
     });
 
-    // Auto-scroll
     const messages = document.getElementById('messages');
     messages.scrollTop = messages.scrollHeight;
   });
 
-  // Enter key handling
   const form = document.getElementById('chatForm');
   const msgInput = form.querySelector('input[name="message"]');
   const fileInput = document.getElementById('fileInput');
 
+  // ENTER KEY → submit form
   msgInput.addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -98,20 +101,31 @@
     }
   });
 
-  // File selection
+  // FILE SELECTED → do NOT modify input text, just keep file
   fileInput.addEventListener('change', () => {
-    if (fileInput.files.length === 0) return;
-
-    const fileName = fileInput.files[0].name;
-    const cur = msgInput.value.trim();
-
-    if (cur) {
-      msgInput.value = cur + (cur.endsWith(' ') ? '' : ' ') + `[Attached: ${fileName}]`;
+    // Do nothing with the text input — file will be sent via form
+    // Optional: give visual feedback (e.g. change button color)
+    const attachBtn = document.querySelector('.chat-attach-btn');
+    if (fileInput.files.length > 0) {
+      attachBtn.style.background = '#2563eb';
+      attachBtn.style.color = 'white';
+      attachBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
     } else {
-      msgInput.value = `[Attached: ${fileName}]`;
+      attachBtn.style.background = '#e2e8f0';
+      attachBtn.style.color = '#475569';
+      attachBtn.innerHTML = '<i class="fa-solid fa-paperclip"></i>';
     }
+  });
 
-    msgInput.focus();
+  // Optional: Reset button on form submit
+  form.addEventListener('submit', () => {
+    setTimeout(() => {
+      const attachBtn = document.querySelector('.chat-attach-btn');
+      attachBtn.style.background = '#e2e8f0';
+      attachBtn.style.color = '#475569';
+      attachBtn.innerHTML = '<i class="fa-solid fa-paperclip"></i>';
+      fileInput.value = ''; // clear file
+    }, 100);
   });
 </script>
 {% endblock %}

@@ -3,7 +3,7 @@
 <h2>Your Career Profile</h2>
 
 {% if profile.error %}
-  <p>{{ profile.error }}</p>
+  <p class="error"><i class="fa-solid fa-exclamation-triangle"></i> {{ profile.error }}</p>
 {% else %}
 <div class="user-info-header">
   <h3>{{ profile.user.name }}</h3>

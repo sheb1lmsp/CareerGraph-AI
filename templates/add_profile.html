@@ -6,18 +6,25 @@
   {% if messages %}
     <div class="flash-messages">
       {% for category, message in messages %}
-        <div class="flash {{ category }}">{{ message }}</div>
+        <div class="flash {{ category }}">
+          {% if category == 'success' %}
+            <i class="fa-solid fa-circle-check"></i>
+          {% elif category == 'error' %}
+            <i class="fa-solid fa-exclamation-triangle"></i>
+          {% endif %}
+          {{ message }}
+        </div>
       {% endfor %}
     </div>
   {% endif %}
 {% endwith %}
 
 <div class="tab-header">
-  <button class="tab-btn active" data-tab="education">Education</button>
-  <button class="tab-btn" data-tab="certification">Certifications</button>
-  <button class="tab-btn" data-tab="project">Projects</button>
-  <button class="tab-btn" data-tab="experience">Experience</button>
-  <button class="tab-btn" data-tab="skills">Skills</button>
+  <button class="tab-btn active" data-tab="education"><i class="fa-solid fa-graduation-cap"></i> Education</button>
+  <button class="tab-btn" data-tab="certification"><i class="fa-solid fa-award"></i> Certifications</button>
+  <button class="tab-btn" data-tab="project"><i class="fa-solid fa-folder-open"></i> Projects</button>
+  <button class="tab-btn" data-tab="experience"><i class="fa-solid fa-briefcase"></i> Experience</button>
+  <button class="tab-btn" data-tab="skills"><i class="fa-solid fa-code"></i> Skills</button>
 </div>
 
 <!-- Education -->
@@ -34,7 +41,7 @@
     <input type="month" name="edu_end">
     <label>CGPA</label>
     <input type="text" name="cgpa">
-    <button type="submit" class="btn">Save Education</button>
+    <button type="submit" class="btn"><i class="fa-solid fa-graduation-cap"></i> Add Education</button>
   </form>
 </div>
 
@@ -46,7 +53,7 @@
     <input type="text" name="cert_name" required>
     <label>Organization</label>
     <input type="text" name="cert_org" required>
-    <button type="submit" class="btn">Save Certification</button>
+    <button type="submit" class="btn"><i class="fa-solid fa-award"></i> Add Certification</button>
   </form>
 </div>
 
@@ -62,7 +69,7 @@
     <input type="month" name="proj_end">
     <label>Description</label>
     <textarea name="proj_desc"></textarea>
-    <button type="submit" class="btn">Save Project</button>
+    <button type="submit" class="btn"><i class="fa-solid fa-folder-open"></i> Add Project</button>
   </form>
 </div>
 
@@ -82,7 +89,7 @@
     <input type="text" name="exp_location">
     <label>Description</label>
     <textarea name="exp_desc"></textarea>
-    <button type="submit" class="btn">Save Experience</button>
+    <button type="submit" class="btn"><i class="fa-solid fa-briefcase"></i> Add Experience</button>
   </form>
 </div>
 
@@ -92,7 +99,7 @@
     <input type="hidden" name="section" value="skills">
     <label>Skills (comma-separated)</label>
     <input type="text" name="skills" placeholder="Python, Flask, AI" required>
-    <button type="submit" class="btn">Save Skills</button>
+    <button type="submit" class="btn"><i class="fa-solid fa-code"></i> Add Skills</button>
   </form>
 </div>
 
