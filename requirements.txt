@@ -1,0 +1,32 @@
+# ---- Core Framework ----
+Flask==3.0.3
+Flask-Cors==4.0.0
+Flask-Bcrypt==1.0.1
+Flask-SQLAlchemy==3.1.1
+
+# ---- AI & LangGraph / LangChain ----
+langchain==1.0.2
+langgraph==1.0.1
+langchain-core==1.0.1
+langchain-google-genai==3.0.0
+
+# ---- Environment & Configuration ----
+python-dotenv==1.0.1
+
+# ---- Resume Parsing ----
+PyMuPDF==1.24.10        # For PDF extraction
+python-docx==1.1.2       # For DOCX extraction
+
+# ---- Utility Libraries ----
+Werkzeug==3.0.3
+itsdangerous==2.2.0
+Jinja2==3.1.4
+
+# ---- Optional (used in notebooks for development/testing) ----
+jupyter==1.1.1
+notebook==7.2.2
+ipykernel==6.29.5
+
+# ---- If deploying on Render/Cloud ----
+gunicorn==22.0.0
+
