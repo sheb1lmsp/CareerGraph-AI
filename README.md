@@ -129,7 +129,7 @@ Then open your browser at **http://127.0.0.1:5000**
 ## 🎥 Demo / Screen Record
 
 You can watch a quick demo of CareerGraph AI in action here:  
-📺 **[Screen Record Video Link](temp/video.mp4)**  
+📺 **[Screen Record Video Link](demo_video/video.mp4)**  
 ---
 
 ## 🧠 AI & Agent Flow
